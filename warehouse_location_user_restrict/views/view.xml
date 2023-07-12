@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_users_form_allwed_locations" model="ir.ui.view">
+            <field name="name">view.users.allwed.stock.locations</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/notebook/page[2]/group[1]" position="before">
+                    <group name="allwed_warehouses">
+                        <field name="stock_warehouse_ids" widget="many2many_tags" />
+                        <field name="stock_warehouse_comp_ids" widget="many2many_tags" />
+                    </group>
+                    <group name="allwed_locations">
+                        <field name="stock_location_ids" widget="many2many_tags" domain="[('warehouse_id', 'in', stock_warehouse_ids),('usage', '=', 'internal')]" />
+                        <field name="stock_location_comp_ids" widget="many2many_tags" />
+                    </group>
+
+                </xpath>
+
+            </field>
+        </record>
+         <record id="view_warehouse_allwed_users" model="ir.ui.view">
+            <field name="name">stock.warehouse.allwed.users</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
+                    <page string="Allowed users" name="members" groups="base.group_erp_manager">
+                        <field name="user_ids" widget="many2many" options="{'not_delete': True}">
+                                    <kanban>
+                                        <field name="id"/>
+                                        <field name="name"/>
+                                        <field name="email"/>
+                                        <field name="avatar_128"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="o_kanban_card_content d-flex">
+                                                        <div>
+                                                            <img t-att-src="kanban_image('res.users', 'avatar_128', record.id.raw_value)" class="o_kanban_image o_image_64_cover" alt="Avatar"/>
+                                                        </div>
+                                                        <div class="oe_kanban_details d-flex flex-column ml-3">
+                                                            <strong class="o_kanban_record_title oe_partner_heading"><field name="name"/></strong>
+                                                            <div class="d-flex align-items-baseline text-break">
+                                                                <i class="fa fa-envelope mr-1" role="img" aria-label="Email" title="Email"/><field name="email"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+         </record>
+         <record id="view_location_allwed_users" model="ir.ui.view">
+            <field name="name">stock.location.allwed.users</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//form[1]/sheet[1]/group[1]" position="after">
+                <group name="members" groups="base.group_erp_manager" string="Allowed users" attrs="{'invisible': [('usage', '!=','internal')]}">
+                        <field name="suitable_users" widget="many2many_tags" invisible="1"/>
+                        <field name="user_ids" widget="many2many"  options="{'not_delete': True}">
+                                    <kanban>
+                                        <field name="id"/>
+                                        <field name="name"/>
+                                        <field name="email"/>
+                                        <field name="avatar_128"/>
+                                        <templates>
+                                            <t t-name="kanban-box">
+                                                <div class="oe_kanban_card oe_kanban_global_click">
+                                                    <div class="o_kanban_card_content d-flex">
+                                                        <div>
+                                                            <img t-att-src="kanban_image('res.users', 'avatar_128', record.id.raw_value)" class="o_kanban_image o_image_64_cover" alt="Avatar"/>
+                                                        </div>
+                                                        <div class="oe_kanban_details d-flex flex-column ml-3">
+                                                            <strong class="o_kanban_record_title oe_partner_heading"><field name="name"/></strong>
+                                                            <div class="d-flex align-items-baseline text-break">
+                                                                <i class="fa fa-envelope mr-1" role="img" aria-label="Email" title="Email"/><field name="email"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                        </field>
+                  </group>
+              </xpath>
+            </field>
+         </record>
+        <record id="view_picking_form_allowed_users" model="ir.ui.view">
+            <field name="name">stock.picking.allowed.users</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="allowed_users" widget="many2many_tags" force_save="1" invisible="1"/>
+                    <field name="check_allowed_user"  force_save="1" invisible="1"/>
+                </xpath>
+              <xpath expr="//form[1]/header[1]/button[@name='action_set_quantities_to_reservation']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('show_set_qty_button', '=', False),('check_allowed_user', '=',False)]}</attribute>
+              </xpath>
+              <xpath expr="//form[1]/header[1]/button[@name='action_clear_quantities_to_zero']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|',('check_allowed_user', '=',False),('show_clear_qty_button', '=', False)]}</attribute>
+              </xpath>
+              <xpath expr="//form[1]/header[1]/button[@name='button_scrap']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', '|','&amp;', ('picking_type_code', '=', 'incoming'), ('state', '!=', 'done'),('check_allowed_user', '=',False), '&amp;', ('picking_type_code', '=', 'outgoing'), ('state', '=', 'done')]}</attribute>
+              </xpath>
+              <xpath expr="//form[1]/header[1]/button[@name='do_unreserve']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|','|', '|', '|', ('picking_type_code', '=', 'incoming'), ('immediate_transfer', '=', True), '&amp;', ('state', '!=', 'assigned'),('check_allowed_user', '=',False), ('move_type', '!=', 'one'), '&amp;', ('state', 'not in', ('assigned', 'confirmed')), ('move_type', '=', 'one')]}</attribute>
+              </xpath>
+
+              <xpath expr="//form[1]/header[1]/button[@name='action_cancel']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('check_allowed_user', '=',False), ('state', 'not in', ('assigned', 'confirmed', 'draft', 'waiting'))]}</attribute>
+              </xpath>
+            </field>
+        </record>
+
+        <record id="stock_picking_type_warehouse_allwed_user" model="ir.rule">
+            <field name="name">stock picking type allowed users</field>
+            <field name="model_id" ref="model_stock_picking_type"/>
+            <field name="domain_force">['|',('warehouse_id.user_ids', '=', user.id),('warehouse_id.user_ids','=',False)]</field>
+            <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+        <record id="stock_picking_warehouse_allwed_user" model="ir.rule">
+            <field name="name">stock picking allowed users</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="domain_force">['|',('allowed_users', '=', user.id),('allowed_users','=',False)]</field>
+            <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+        <record id="stock_quant_warehouse_allwed_user" model="ir.rule">
+            <field name="name">stock quant allowed users</field>
+            <field name="model_id" ref="model_stock_quant"/>
+            <field name="domain_force">['|',('location_id.user_ids', '=', user.id),('location_id.user_ids','=',False)]</field>
+            <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+        <record id="stock_scrap_warehouse_allwed_user" model="ir.rule">
+            <field name="name">stock scrap allowed users</field>
+            <field name="model_id" ref="model_stock_scrap"/>
+            <field name="domain_force">['|',('location_id.user_ids', '=', user.id),('location_id.user_ids','=',False)]</field>
+            <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        </record>
+
+
+    </data>
+</odoo>
