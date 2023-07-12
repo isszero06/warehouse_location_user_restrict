@@ -1,7 +1,7 @@
 
 {
     'name': 'Warehouse locations User Restrict',
-    'version': '6.0.0',
+    'version': '5.0.0',
     'category': 'Warehouse',
     "author": 'Zero Systems',
     "company": 'Zero for Information Systems',
