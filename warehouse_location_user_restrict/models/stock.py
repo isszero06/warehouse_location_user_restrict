@@ -76,38 +76,28 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
 
-    allowed_users = fields.Many2many("res.users",string='Allowed Users',compute='_allowed_users',store=True)
+    allowed_users = fields.Many2many("res.users",string='Allowed Users',compute='_allowed_users')
 
 
 
     check_allowed_user = fields.Boolean(compute='_check_allowed_user')
 
 
-    @api.depends('state')
-    def _compute_show_validate(self):
-        for picking in self:
-            if not (picking.immediate_transfer) and picking.state == 'draft':
-                picking.show_validate = False
-            elif picking.state not in ('draft', 'waiting', 'confirmed', 'assigned'):
-                picking.show_validate = False
-            else:
-                user = self.env.user
-                if picking.allowed_users and user in (picking.allowed_users):
-                    picking.show_validate = True
-                elif picking.allowed_users and user not in (picking.allowed_users):
-                    picking.show_validate = False
-                elif not picking.allowed_users:
-                    picking.show_validate = True
-                else:
-                    picking.show_validate = True
 
-    @api.depends('state')
+    @api.onchange('state')
     def _allowed_users(self):
         for record in self:
+            user = self.env.user
+            record.allowed_users = False
             if record.picking_type_id.code == 'outgoing' and (record.location_id and record.location_id.user_ids):
                 record.allowed_users = record.location_id.user_ids
-            elif record.picking_type_id.code == 'internal' and (record.location_dest_id and record.location_dest_id.user_ids):
-                record.allowed_users = record.location_dest_id.user_ids
+
+            elif record.picking_type_id.code == 'internal':
+                if record.state not in ('assigned','confirmed') and record.location_id and record.location_id.user_ids: 
+                    record.allowed_users = record.location_id.user_ids
+                if record.state in ('assigned','confirmed') and record.location_dest_id and record.location_dest_id.user_ids: 
+                    record.allowed_users = record.location_dest_id.user_ids
+
             elif record.picking_type_id.code == 'incoming' and (record.location_dest_id and record.location_dest_id.user_ids):
                 record.allowed_users = record.location_dest_id.user_ids
             else:
@@ -119,6 +109,7 @@ class StockPicking(models.Model):
     def _check_allowed_user(self):
         for picking in self:
             user = self.env.user
+            picking.allowed_users = False
             if picking.allowed_users and user in (picking.allowed_users):
                 picking.check_allowed_user = True
             elif picking.allowed_users and user not in (picking.allowed_users):
