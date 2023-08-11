@@ -1,6 +1,6 @@
 
 {
-    'name': 'Warehouse locations User Restrict Validate',
+    'name': 'Warehouse Internal Transfers User to Validate',
     'version': '6.0.0',
     'category': 'Warehouse',
     "author": 'Zero Systems',
@@ -10,15 +10,13 @@
     "sequence": 0,
     'license': 'OPL-1',
     'live_test_url': 'https://www.youtube.com/playlist?list=PLXFpENL3b6WU9TzMdawrHJsUBqMDXkcbn',
-    'summary': """Warehouse Destination Location Users Approve""",
-    'description': """Automatically Create Receipt/Delivery orders if any branch validates a 
-                      Deliver Order/Receipt to the selected branch,Inter branch Stock Transfer, Stock Transfer,
-                      Create counterpart Receipt/Delivery Orders between Branches""",
+    'summary': """Validate of the store transfer is the right of the user who has rights on the store transferred to him only""",
+    'description': """Validate of the store transfer is the right of the user who has rights on the store transferred to him only""",
     'depends': ['base','stock'],
     'data': [
         'views/view.xml',
     ],
-    'images': ['static/description/logo.PNG'],
+    'images': ['static/description/internal_transfers.png'],
     'installable': True,
     'auto_install': False,
     'application': False,
