@@ -1,6 +1,6 @@
 
 {
-    'name': 'Warehouse locations User Restrict',
+    'name': 'Warehouse locations User Restrict Validate',
     'version': '6.0.0',
     'category': 'Warehouse',
     "author": 'Zero Systems',
