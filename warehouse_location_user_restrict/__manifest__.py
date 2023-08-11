@@ -9,7 +9,7 @@
     "email": "sales@erpzero.com",
     "sequence": 0,
     'license': 'OPL-1',
-    'live_test_url': 'https://www.youtube.com/playlist?list=PLXFpENL3b6WU9TzMdawrHJsUBqMDXkcbn',
+    'live_test_url': 'https://youtu.be/qNdS9HM2h7E',
     'summary': """Validate of the store transfer is the right of the user who has rights on the store transferred to him only""",
     'description': """Validate of the store transfer is the right of the user who has rights on the store transferred to him only""",
     'depends': ['base','stock'],
