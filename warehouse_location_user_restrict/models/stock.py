@@ -84,6 +84,25 @@ class StockPicking(models.Model):
 
 
 
+    @api.depends('state')
+    def _compute_show_validate(self):
+        for picking in self:
+            if not (picking.immediate_transfer) and picking.state == 'draft':
+                picking.show_validate = False
+            elif picking.state not in ('draft', 'waiting', 'confirmed', 'assigned'):
+                picking.show_validate = False
+            else:
+                user = self.env.user
+                if picking.allowed_users and user in (picking.allowed_users):
+                    picking.show_validate = True
+                elif picking.allowed_users and user not in (picking.allowed_users):
+                    picking.show_validate = False
+                elif not picking.allowed_users:
+                    picking.show_validate = True
+                else:
+                    picking.show_validate = True
+
+
     @api.onchange('state')
     def _allowed_users(self):
         for record in self:
@@ -109,7 +128,7 @@ class StockPicking(models.Model):
     def _check_allowed_user(self):
         for picking in self:
             user = self.env.user
-            picking.allowed_users = False
+            picking.check_allowed_user = False
             if picking.allowed_users and user in (picking.allowed_users):
                 picking.check_allowed_user = True
             elif picking.allowed_users and user not in (picking.allowed_users):
