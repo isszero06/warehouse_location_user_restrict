@@ -21,6 +21,6 @@
     'auto_install': False,
     'application': False,
     'pre_init_check_vers': 'pre_init_check_vers',
-    "price": 15.0,
+    "price": 00.0,
     "currency": 'EUR',
 }
